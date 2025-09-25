@@ -1,0 +1,95 @@
+*open-gitiles.txt*                Open Gitiles URLs from your working file
+
+==============================================================================
+INTRODUCTION                                                        *open-gitiles*
+
+open-gitiles is a tiny Vim plugin that converts your current buffer/selection
+to a Gerrit Gitiles URL and either prints it (default) or opens it in a
+browser. It reads your Git remote to discover the project path.
+
+Why print? Many folks work on remote machines; printing lets you copy the URL
+locally and open it in your desktop browser.
+
+Requirements: *git* on PATH, a Git repo, a Gitiles-compatible Gerrit remote.
+
+Gitiles limitation: only single-line anchors are supported; ranges cannot be
+highlighted in the URL.
+
+==============================================================================
+INSTALLATION                                                    *open-gitiles-install*
+
+With vim-plug:
+
+>   Plug 'anirudhsundar/open-gitiles.vim'
+
+Then:
+
+>   :PlugInstall
+>   :helptags ALL
+
+==============================================================================
+USAGE                                                            *open-gitiles-usage*
+
+Commands~
+
+:OpenGitiles [remote]          Build URL for the current file at the cursor
+                               (or first line of a visual selection) and print
+                               it to :messages (also yanks to +/* by default).
+                               The optional {remote} defaults to 'origin'.
+
+:OpenGitilesEcho [remote]      Always print (ignore g:open_gitiles_open_browser).
+
+:OpenGitilesBrowse [remote]    Always open in a browser (netrw#BrowseX/xdg-open).
+
+Ranges & Visual Mode~
+- Use as a range command:  :42,57OpenGitiles
+- In Visual mode, select lines and run :OpenGitiles (or a mapping). Gitiles
+  only supports single-line anchors; the URL points at the first selected line.
+
+Examples~
+- :OpenGitiles
+- :OpenGitiles upstream
+- :OpenGitilesBrowse
+- :OpenGitilesEcho upstream
+
+Optional mappings (add to your vimrc)~
+>   nnoremap <silent> <leader>go :OpenGitiles<CR>
+>   xnoremap <silent> <leader>go :<C-U>OpenGitiles<CR>
+
+==============================================================================
+CONFIGURATION                                              *open-gitiles-config*
+
+g:open_gitiles_open_browser (default: 0)~
+  If 1, :OpenGitiles opens your browser instead of printing the URL.
+
+g:open_gitiles_use_branch (default: 0)~
+  If 1, the URL uses refs/heads/<current-branch>. Otherwise it pins to the
+  current commit SHA.
+
+g:open_gitiles_path (default: '/plugins/gitiles')~
+  Change this if your Gerrit exposes Gitiles at a different mount (e.g. '/gitiles').
+
+g:open_gitiles_copy_to_clipboard (default: 1)~
+  If 1, the printed URL is yanked to +/* registers when available.
+
+==============================================================================
+REMOTE FORMATS                                              *open-gitiles-remote*
+
+Supported remotes include:
+- ssh://[user@]host[:port]/project
+- [user@]host:project (scp-like)
+- https://host[/a]/project(.git)
+Trailing ".git" and Gerrit's "/a/" prefix are stripped.
+The "project" part is appended to g:open_gitiles_path to form the base URL.
+
+==============================================================================
+TROUBLESHOOTING                                          *open-gitiles-troubleshooting*
+
+- "not inside a Git repo": run from a tracked file in a repository.
+- URL prints but won't open with :OpenGitilesBrowse:
+  ensure |netrw| is available or that your OS supports xdg-open/open/start.
+
+==============================================================================
+LICENSE                                                          *open-gitiles-license*
+
+MIT
