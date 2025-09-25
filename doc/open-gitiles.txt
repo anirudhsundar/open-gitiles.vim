@@ -25,7 +25,6 @@ With vim-plug:
 Then:
 
 >   :PlugInstall
->   :helptags ALL
 
 ==============================================================================
 USAGE                                                            *open-gitiles-usage*
